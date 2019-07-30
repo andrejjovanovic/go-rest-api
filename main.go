@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -43,6 +44,8 @@ func handleRequests() {
 	muxRouter.HandleFunc("/articles", returnAllArticles)
 	muxRouter.HandleFunc("/getAllEvents", returnAllEvents)
 	muxRouter.HandleFunc("/getEvent/{Id}", returnSingleEvent)
+	muxRouter.HandleFunc("/createEvent", createNewEvent).Methods("POST")
+	muxRouter.HandleFunc("/deleteEvent/{id}", deleteEvent).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":10000", muxRouter))
 }
 
@@ -64,6 +67,40 @@ func returnSingleEvent(w http.ResponseWriter, r *http.Request) {
 	for _, events := range EventList {
 		if events.Id == key {
 			json.NewEncoder(w).Encode(events)
+		}
+	}
+}
+
+func createNewEvent(w http.ResponseWriter, r *http.Request) {
+	// get the body of our POST request
+	// return the string response containing the request body
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	//fmt.Fprintf(w, "%+v", string(reqBody))
+	var event Event
+	json.Unmarshal(reqBody, &event)
+	fmt.Fprintf(w, "%+v", string(reqBody))
+	EventList = append(EventList, event)
+
+	json.NewEncoder(w).Encode(event)
+}
+
+func deleteEvent(w http.ResponseWriter, r *http.Request) {
+	// once again, we will need to parse the path parameters
+	vars := mux.Vars(r)
+	// we will need to extract the `id` of the article we
+	// wish to delete
+	id := vars["id"]
+	fmt.Println("Hello")
+
+	// we then need to loop through all our articles
+	for index, Event := range EventList {
+		// if our id path parameter matches one of our
+		// articles
+		if Event.Id == id {
+			// updates our Articles array to remove the
+			// article
+			fmt.Println("Event: " + Event.Id)
+			EventList = append(EventList[:index], EventList[index+1:]...)
 		}
 	}
 }
