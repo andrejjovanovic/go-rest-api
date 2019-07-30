@@ -9,12 +9,6 @@ import (
 	"net/http"
 )
 
-type Article struct {
-	Title   string `json:"Title"`
-	Desc    string `json:"desc"`
-	Content string `json:"content"`
-}
-
 type Event struct {
 	Id        string `json:"id"`
 	Title     string `json:"title"`
@@ -27,7 +21,6 @@ type Event struct {
 // let's declare a global Articles array
 // that we can then populate in our main function
 // to simulate a database
-var Articles []Article
 var EventList []Event
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +34,6 @@ func handleRequests() {
 	muxRouter.HandleFunc("/", homePage)
 	// add our articles route and map it to our
 	// returnAllArticles function like so
-	muxRouter.HandleFunc("/articles", returnAllArticles)
 	muxRouter.HandleFunc("/getAllEvents", returnAllEvents)
 	muxRouter.HandleFunc("/getEvent/{Id}", returnSingleEvent)
 	muxRouter.HandleFunc("/createEvent", createNewEvent).Methods("POST")
@@ -49,10 +41,6 @@ func handleRequests() {
 	log.Fatal(http.ListenAndServe(":10000", muxRouter))
 }
 
-func returnAllArticles(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint Hit: returnAllArticles")
-	json.NewEncoder(w).Encode(Articles)
-}
 
 func returnAllEvents(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllEvents")
@@ -107,10 +95,6 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println("Rest API v2.0 - Mux Routers")
-	Articles = []Article{
-		Article{Title: "Hello", Desc: "Article Description", Content: "Article Content"},
-		Article{Title: "Hello 2", Desc: "Article Description", Content: "Article Content"},
-	}
 
 	EventList = []Event{
 		Event{Id: "1", Title: "Hello World", Place: "Malaga", Speaker: "Andrej", EventType: "Webinar", DateTime: "24.9.2018"},
