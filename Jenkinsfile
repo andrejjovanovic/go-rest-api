@@ -14,7 +14,13 @@ pipeline {
         stage('Checkout'){
             steps{
                 echo "Checkout"
-                checkout scm
+                checkout([
+                     $class: 'GitSCM',
+                     branches: scm.branches,
+                     doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                     extensions: scm.extensions,
+                     userRemoteConfigs: scm.userRemoteConfigs
+                ])
             }
         }
 
@@ -22,6 +28,7 @@ pipeline {
             steps {
                 echo "Building"
                 sh "cat Dockerfile"
+                sh ""
             }
         }
 
