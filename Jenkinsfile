@@ -28,7 +28,6 @@ pipeline {
             steps {
                 echo "Building"
                 sh "cat Dockerfile"
-                sh ""
             }
         }
 
